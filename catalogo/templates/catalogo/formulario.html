@@ -1,0 +1,29 @@
+{% extends "catalogo/base.html" %}
+{% block content %}
+<div class="panel" style="max-width: 680px; margin: 12px auto;">
+    <div class="panel-header">
+        <h2 class="panel-title">Registrar {{ titulo }}</h2>
+        <span class="badge-algo">UVM Base de Datos</span>
+    </div>
+    <p style="color:#A1A5B7; font-size:13.5px; margin-top:0; margin-bottom:18px;">{{ descripcion }}</p>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div style="margin-bottom: 14px;">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div style="color:#FF6B81; font-size:12px; margin-top:4px;">{{ field.errors|striptags }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        {% if form.non_field_errors %}
+            <div class="msg-toast">{{ form.non_field_errors|striptags }}</div>
+        {% endif %}
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <button type="submit">Guardar en base de datos</button>
+            <a class="btn-ghost" href="{% url 'inicio' %}">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

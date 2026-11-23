@@ -1,0 +1,199 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ title }} | UVM Music Admin{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    :root,
+    html[data-theme="light"],
+    html[data-theme="dark"],
+    html[data-theme="auto"] {
+        --primary: #C8102E !important;
+        --secondary: #8E0B20 !important;
+        --accent: #FF4D6D !important;
+        --primary-fg: #FFFFFF !important;
+        --body-fg: #F5F6FA !important;
+        --body-bg: #0F0F14 !important;
+        --body-quiet-color: #A1A5B7 !important;
+        --body-medium-color: #C2C6D6 !important;
+        --body-loud-color: #FFFFFF !important;
+        --header-color: #FFFFFF !important;
+        --header-branding-color: #FFFFFF !important;
+        --header-bg: #8E0B20 !important;
+        --header-link-color: #FFE4E8 !important;
+        --breadcrumbs-fg: #FFE4E8 !important;
+        --breadcrumbs-link-fg: #FFFFFF !important;
+        --breadcrumbs-bg: #171720 !important;
+        --link-fg: #FF6B81 !important;
+        --link-hover-color: #FF99AA !important;
+        --link-selected-fg: #FFFFFF !important;
+        --hairline-color: #292938 !important;
+        --border-color: #2E2E3E !important;
+        --darkened-bg: #171720 !important;
+        --selected-bg: #2A121B !important;
+        --selected-row: #2A121B !important;
+        --button-fg: #FFFFFF !important;
+        --button-bg: #C8102E !important;
+        --button-hover-bg: #EF233C !important;
+        --default-button-bg: #EF233C !important;
+        --default-button-hover-bg: #C8102E !important;
+        --close-button-bg: #2A2F3A !important;
+        --close-button-hover-bg: #3A4150 !important;
+        --delete-button-bg: #8E0B20 !important;
+        --delete-button-hover-bg: #B50E2A !important;
+        --object-tools-fg: #FFFFFF !important;
+        --object-tools-bg: #C8102E !important;
+        --object-tools-hover-bg: #EF233C !important;
+        --message-success-bg: #192E24 !important;
+        --message-warning-bg: #332614 !important;
+        --message-error-bg: #3B121A !important;
+    }
+
+    body {
+        font-family: Arial, Helvetica, sans-serif !important;
+        background: #0F0F14 !important;
+        color: #F5F6FA !important;
+    }
+
+    #header {
+        background: linear-gradient(125deg, #4E0816 0%, #8E0B20 50%, #C8102E 100%) !important;
+        border-bottom: 1px solid rgba(255, 77, 109, 0.35) !important;
+        padding: 14px 28px !important;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    .uvm-admin-brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none !important;
+        color: #FFFFFF !important;
+    }
+
+    .uvm-eq {
+        display: inline-flex;
+        align-items: flex-end;
+        gap: 3px;
+        height: 22px;
+    }
+    .uvm-eq span {
+        display: block;
+        width: 4px;
+        border-radius: 2px;
+        background: #FFFFFF;
+    }
+    .uvm-eq span:nth-child(1) { height: 9px; }
+    .uvm-eq span:nth-child(2) { height: 17px; }
+    .uvm-eq span:nth-child(3) { height: 22px; }
+    .uvm-eq span:nth-child(4) { height: 13px; }
+
+    .uvm-admin-pill {
+        background: #FFFFFF;
+        color: #C8102E;
+        font-weight: 700;
+        padding: 3px 9px;
+        border-radius: 5px;
+        font-size: 13px;
+        letter-spacing: 1px;
+    }
+
+    .module {
+        background: #171720 !important;
+        border: 1px solid #292938 !important;
+        border-radius: 12px !important;
+        overflow: hidden !important;
+        margin-bottom: 20px !important;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25) !important;
+    }
+
+    .module h2, .module caption, .inline-group h2 {
+        background: linear-gradient(90deg, #8E0B20 0%, #C8102E 100%) !important;
+        color: #FFFFFF !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.5px !important;
+        padding: 11px 14px !important;
+    }
+
+    div.breadcrumbs {
+        border-bottom: 1px solid #292938 !important;
+        padding: 10px 28px !important;
+    }
+
+    #content-related {
+        background: #171720 !important;
+        border: 1px solid #292938 !important;
+        border-radius: 12px !important;
+    }
+
+    #content-related .module h2 {
+        background: #1F1F2B !important;
+        border-bottom: 2px solid #C8102E !important;
+    }
+
+    #changelist table thead th {
+        background: #1E1E2B !important;
+        border-bottom: 2px solid #C8102E !important;
+    }
+
+    #changelist table tbody tr:hover {
+        background: #232332 !important;
+    }
+
+    input[type=text], input[type=password], input[type=email], input[type=url],
+    input[type=number], textarea, select, .vTextField {
+        background: #101016 !important;
+        color: #F5F6FA !important;
+        border: 1px solid #353548 !important;
+        border-radius: 7px !important;
+    }
+
+    .submit-row {
+        background: #171720 !important;
+        border: 1px solid #292938 !important;
+        border-radius: 10px !important;
+    }
+
+    .button, input[type=submit], input[type=button], .submit-row input {
+        border-radius: 999px !important;
+        padding: 9px 18px !important;
+        font-weight: 700 !important;
+    }
+
+    #header {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+    #user-tools {
+        margin-left: auto !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        background: rgba(10, 10, 14, 0.45) !important;
+        border: 1px solid rgba(255, 255, 255, 0.22) !important;
+        padding: 7px 14px !important;
+        border-radius: 999px !important;
+        font-size: 12px !important;
+    }
+
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name" style="margin:0;">
+    <a class="uvm-admin-brand" href="{% url 'admin:index' %}">
+        <span class="uvm-eq"><span></span><span></span><span></span><span></span></span>
+        <span class="uvm-admin-pill">UVM</span>
+        <span style="font-size:17px; font-weight:700;">UVM MUSIC · Administracion</span>
+    </a>
+</h1>
+{% endblock %}
+
+{% block nav-global %}
+<div style="margin-left:18px;">
+    <a href="/" style="background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.35); color:#FFFFFF; padding:6px 13px; border-radius:999px; font-size:12px; font-weight:700; text-decoration:none;">
+        &#9654; Ir a UVM Music (App Deezer)
+    </a>
+</div>
+{% endblock %}

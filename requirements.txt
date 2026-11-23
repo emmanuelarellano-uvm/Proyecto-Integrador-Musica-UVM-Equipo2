@@ -1,0 +1,4 @@
+pandas>=2.0.0
+Django>=4.2,<7.0
+pygame-ce>=2.5.0
+mutagen>=1.47.0

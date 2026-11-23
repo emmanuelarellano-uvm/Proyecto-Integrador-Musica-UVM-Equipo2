@@ -1,0 +1,185 @@
+{% extends "catalogo/base.html" %}
+{% block content %}
+<section class="hero-flow">
+    <div>
+        <div class="hero-pill">UVM Flow · Streaming & Algoritmos</div>
+        <h1>Catalogo Musical Inteligente</h1>
+        <p>Base de datos relacional en Django + Arreglos, Pilas, Colas, Listas Enlazadas, ABB, Busqueda Binaria y Quicksort</p>
+    </div>
+    <div class="kpi-strip">
+        <div class="kpi-chip"><span class="num">{{ conteos.pistas }}</span><span class="lbl">Pistas</span></div>
+        <div class="kpi-chip"><span class="num">{{ conteos.artistas }}</span><span class="lbl">Artistas</span></div>
+        <div class="kpi-chip"><span class="num">{{ conteos.albumes }}</span><span class="lbl">Albumes</span></div>
+        <div class="kpi-chip"><span class="num">{{ conteos.usuarios }}</span><span class="lbl">Usuarios</span></div>
+        <div class="kpi-chip"><span class="num">{{ conteos.listas }}</span><span class="lbl">Playlists</span></div>
+        <div class="kpi-chip"><span class="num">{{ conteos.seguidores }}</span><span class="lbl">Seguidores</span></div>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="panel-header">
+        <h2 class="panel-title">Buscador Avanzado y Motor de Algoritmos</h2>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <span class="badge-algo">{{ metodo_usado }}</span>
+            <span class="badge-count">{{ total_resultados }} resultados</span>
+        </div>
+    </div>
+    <form method="get">
+        <div class="grid-search">
+            <div><label>Titulo de la cancion</label>{{ form_busqueda.titulo }}</div>
+            <div><label>Artista</label>{{ form_busqueda.artista }}</div>
+            <div><label>Album</label>{{ form_busqueda.album }}</div>
+            <div><label>Racha</label>{{ form_busqueda.racha }}</div>
+            <div><label>Posicion en lista</label>{{ form_busqueda.posicion }}</div>
+            <div><label>Algoritmo</label>{{ form_busqueda.metodo }}</div>
+            <div><label>Ordenar (Quicksort)</label>{{ form_busqueda.ordenar_por }}</div>
+            <div style="display:flex; align-items:center; gap:8px; padding-top:20px;">
+                {{ form_busqueda.solo_favoritos }}
+                <label style="margin:0; color:#F5F6FA;">Solo favoritos</label>
+            </div>
+        </div>
+        <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
+            <button type="submit">Buscar ahora</button>
+            <a class="btn-ghost" href="{% url 'inicio' %}">Limpiar filtros</a>
+        </div>
+    </form>
+</section>
+
+<section class="grid-3">
+    <div class="panel struct-card" style="margin-bottom:0;">
+        <div class="panel-header" style="margin-bottom:8px;">
+            <h3 class="panel-title">Cola de Reproduccion (FIFO)</h3>
+            <div style="display:flex; align-items:center; gap:7px;">
+                <a class="icon-btn play" style="height:28px; padding:0 11px; font-size:11.5px;" href="{% url 'reproducir_siguiente_cola' %}">Siguiente &#9654;</a>
+                {% if cola_pistas %}
+                    <a class="btn-clear-q" style="height:28px; font-size:11px;" href="{% url 'vaciar_cola' %}" title="Eliminar toda la cola de reproduccion">Vaciar cola</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="struct-scroll">
+            <ul class="mini-track-list">
+                {% for p in cola_pistas %}
+                    <li>
+                        <span class="mini-index">{{ forloop.counter }}</span>
+                        <div style="min-width:0;">
+                            <div style="color:#F5F6FA; font-weight:700;">{{ p.nombre }}</div>
+                            <div style="color:#A1A5B7; font-size:11px;">{{ p.artista }}</div>
+                        </div>
+                        <a class="btn-remove-q" href="{% url 'quitar_de_cola' forloop.counter0 %}" title="Retirar esta pista de la cola">&#10005;</a>
+                    </li>
+                {% empty %}
+                    <li style="color:#6C7086;">No hay pistas en cola todavia.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="panel struct-card" style="margin-bottom:0;">
+        <div class="panel-header" style="margin-bottom:8px;">
+            <h3 class="panel-title">Historial Reciente (Pila LIFO)</h3>
+        </div>
+        <div class="struct-scroll">
+            <ul class="mini-track-list">
+                {% for p in historial_pistas %}
+                    <li>
+                        <span class="mini-index">&#9835;</span>
+                        <div style="min-width:0;">
+                            <div style="color:#F5F6FA; font-weight:700;">{{ p.nombre }}</div>
+                            <div style="color:#A1A5B7; font-size:11px;">{{ p.artista }}</div>
+                        </div>
+                    </li>
+                {% empty %}
+                    <li style="color:#6C7086;">Aun no has reproducido pistas.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="panel struct-card" style="margin-bottom:0;">
+        <div class="panel-header" style="margin-bottom:8px;">
+            <h3 class="panel-title">Playlists (Lista Enlazada)</h3>
+            <a class="icon-btn queue" style="height:28px; padding:0 11px; font-size:11.5px;" href="{% url 'registrar_lista' %}">+ Crear</a>
+        </div>
+        <div class="struct-scroll">
+            {% for l in listas_enlazadas %}
+                <div class="playlist-box">
+                    <div style="color:#F5F6FA; font-weight:700;">{{ l.nombre }} <span style="color:#A1A5B7; font-weight:400;">· {{ l.usuario }}</span></div>
+                    <div style="color:#A1A5B7; font-size:11.5px; margin-top:4px;">{{ l.pistas|join:"  &#8594;  "|default:"Sin pistas asignadas" }}</div>
+                </div>
+            {% empty %}
+                <p style="color:#6C7086; font-size:12.5px; margin:6px 0 0 0;">Crea tu primera playlist desde el menu izquierdo.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="panel-header">
+        <h2 class="panel-title">Pistas del Catalogo</h2>
+        <span class="badge-count">Mostrando {{ total_resultados }} canciones</span>
+    </div>
+    <div class="track-table-wrap">
+        <table class="tracklist">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Cancion / Artista</th>
+                    <th>Album</th>
+                    <th>Racha</th>
+                    <th>Chart</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in pistas %}
+                <tr>
+                    <td style="color:#6C7086;">{{ p.id }}</td>
+                    <td>
+                        <div class="track-main">
+                            <div class="cover-thumb">{{ p.inicial }}</div>
+                            <div>
+                                <div class="track-title">{{ p.nombre }}</div>
+                                <div class="track-artist">{{ p.artista }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="color:#C2C6D6;">{{ p.album }}</td>
+                    <td style="color:#A1A5B7;">{{ p.racha }}</td>
+                    <td>
+                        <span class="pos-tag {% if 'No. 1' == p.posicion %}top1{% endif %}">{{ p.posicion }}</span>
+                    </td>
+                    <td>
+                        <div class="track-actions">
+                            <a class="icon-btn play" href="{% url 'reproducir_pista' p.id %}" title="Reproducir pista">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6,4 20,12 6,20"/></svg>
+                                <span>Play</span>
+                            </a>
+                            <a class="icon-btn queue" href="{% url 'encolar_pista' p.id %}" title="Agregar a la cola de reproduccion">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <line x1="3" y1="6" x2="15" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="11" y2="18"/>
+                                    <line x1="18" y1="14" x2="18" y2="22" stroke="#FF4D6D"/><line x1="14" y1="18" x2="22" y2="18" stroke="#FF4D6D"/>
+                                </svg>
+                                <span>En cola</span>
+                            </a>
+                            <a class="icon-btn fav {% if p.favorito %}is-fav{% endif %}" href="{% url 'alternar_favorito' p.id %}" title="{% if p.favorito %}Quitar de favoritos{% else %}Agregar a favoritos{% endif %}">
+                                {% if p.favorito %}
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                                {% else %}
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                                {% endif %}
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align:center; padding:26px; color:#6C7086;">
+                        No se encontraron canciones con los filtros actuales.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
