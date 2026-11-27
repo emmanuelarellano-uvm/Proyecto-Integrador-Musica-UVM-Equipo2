@@ -676,7 +676,7 @@ class ReproductorUVMDeezerPro:
 
         tk.Label(
             pie_sidebar,
-            text="Edgar Cabrera Miranda\nEmmanuel Arellano Garcia\nHugo Armando Arias Lopez\nJose Augusto Canul Chi",
+            text="Emmanuel Arellano Garcia\nHugo Armando Arias Lopez\nJose Augusto Canul Chi",
             font=("Arial", 8),
             bg="#151824",
             fg=TEXT_SOFT,
